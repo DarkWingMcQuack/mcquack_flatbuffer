@@ -42,5 +42,7 @@ jobs:
 
     - name: Test
       working-directory: ${{github.workspace}}/build
-      run: make test
+      run: make test   
+      shell: bash
+
 
