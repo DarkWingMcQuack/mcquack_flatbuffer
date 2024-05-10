@@ -1,0 +1,27 @@
+---
+Checks: "-*,\
+bugprone-*,\
+-bugprone-lambda-function-name,\
+-bugprone-easily-swappable-parameters,\
+clang-analyzer-*,\
+clang-diagnostic-error,\
+performance-*,\
+google-readability-casting,\
+cppcoreguidelines-avoid-goto,\
+cppcoreguidelines-interfaces-global-init,\
+misc-*,\
+-misc-incorrect-roundings,\
+-misc-no-recursion,\
+modernize-*,\
+-modernize-use-nodiscard,\
+readability-*,\
+-readability-magic-numbers,\
+-readability-identifier-length,
+-readability-redundant-access-specifiers,\
+-readability-braces-around-statements,\
+-readability-implicit-bool-cast,\
+-readability-implicit-bool-conversion,\
+-readability-convert-member-functions-to-static,\
+-readability-uppercase-literal-suffix,\
+"
+...
