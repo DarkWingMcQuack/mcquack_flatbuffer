@@ -87,9 +87,7 @@ public:
     {
         struct internal
         {
-            constexpr internal(const dynamic_flatbuffer<T, SLOT_SIZE>& buffer) noexcept
-                : buffer_(buffer)
-            {}
+            constexpr internal(const std::vector<T>& buffer) noexcept : buffer_(buffer) {}
             constexpr auto begin() noexcept { return buffer_.begin(); }
             constexpr auto cbegin() const noexcept { return buffer_.cbegin(); }
             constexpr auto end() noexcept { return buffer_.end(); }
@@ -100,28 +98,27 @@ public:
             constexpr auto crend() noexcept { return buffer_.crend(); }
 
         private:
-            const dynamic_flatbuffer<T, SLOT_SIZE>& buffer_;
+            std::vector<T>& buffer_;
         };
 
-        return internal{*this};
+        return internal{buffer_};
     }
 
     constexpr auto elements() & noexcept
     {
         struct internal
         {
-            constexpr internal(dynamic_flatbuffer<T, SLOT_SIZE>& buffer) noexcept : buffer_(buffer)
-            {}
+            constexpr internal(std::vector<T>& buffer) noexcept : buffer_(buffer) {}
             constexpr auto begin() noexcept { return buffer_.begin(); }
             constexpr auto end() noexcept { return buffer_.end(); }
             constexpr auto rbegin() noexcept { return buffer_.rbegin(); }
             constexpr auto rend() noexcept { return buffer_.rend(); }
 
         private:
-            dynamic_flatbuffer<T, SLOT_SIZE>& buffer_;
+            std::vector<T>& buffer_;
         };
 
-        return internal{*this};
+        return internal{buffer_};
     }
 
 

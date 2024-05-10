@@ -8,7 +8,7 @@ using mcquack::dynamic_flatbuffer;
 TEST(DynamicFlatBufferTest, AccessWithinRange)
 {
     dynamic_flatbuffer<int, 3> buf(2);
-    std::iota(buf.begin(), buf.end(), 0);
+    std::iota(buf.elements().begin(), buf.elements().end(), 0);
 
     auto span = buf[0];
     EXPECT_EQ(span[0], 0);
