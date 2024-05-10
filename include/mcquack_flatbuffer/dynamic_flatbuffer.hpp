@@ -83,14 +83,46 @@ public:
 
     constexpr auto number_of_elements() const noexcept -> std::size_t { return buffer_.size(); }
 
-    constexpr auto begin() noexcept { return buffer_.begin(); }
-    constexpr auto cbegin() const noexcept { return buffer_.cbegin(); }
-    constexpr auto end() noexcept { return buffer_.end(); }
-    constexpr auto cend() noexcept { return buffer_.cend(); }
-    constexpr auto rbegin() noexcept { return buffer_.rbegin(); }
-    constexpr auto crbegin() const noexcept { return buffer_.crbegin(); }
-    constexpr auto rend() noexcept { return buffer_.rend(); }
-    constexpr auto crend() noexcept { return buffer_.crend(); }
+    constexpr auto elements() const& noexcept
+    {
+        struct internal
+        {
+            constexpr internal(const dynamic_flatbuffer<T, SLOT_SIZE>& buffer) noexcept
+                : buffer_(buffer)
+            {}
+            constexpr auto begin() noexcept { return buffer_.begin(); }
+            constexpr auto cbegin() const noexcept { return buffer_.cbegin(); }
+            constexpr auto end() noexcept { return buffer_.end(); }
+            constexpr auto cend() noexcept { return buffer_.cend(); }
+            constexpr auto rbegin() noexcept { return buffer_.rbegin(); }
+            constexpr auto crbegin() const noexcept { return buffer_.crbegin(); }
+            constexpr auto rend() noexcept { return buffer_.rend(); }
+            constexpr auto crend() noexcept { return buffer_.crend(); }
+
+        private:
+            const dynamic_flatbuffer<T, SLOT_SIZE>& buffer_;
+        };
+
+        return internal{*this};
+    }
+
+    constexpr auto elements() & noexcept
+    {
+        struct internal
+        {
+            constexpr internal(dynamic_flatbuffer<T, SLOT_SIZE>& buffer) noexcept : buffer_(buffer)
+            {}
+            constexpr auto begin() noexcept { return buffer_.begin(); }
+            constexpr auto end() noexcept { return buffer_.end(); }
+            constexpr auto rbegin() noexcept { return buffer_.rbegin(); }
+            constexpr auto rend() noexcept { return buffer_.rend(); }
+
+        private:
+            dynamic_flatbuffer<T, SLOT_SIZE>& buffer_;
+        };
+
+        return internal{*this};
+    }
 
 
 private:
