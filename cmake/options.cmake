@@ -1,3 +1,1 @@
-option(BUILD_TESTS "build tests" OFF)
-option(BUILD_BENCHMARKS "build benchmarks" OFF)
-option(BUILD_EXAMPLES "build examples" OFF)
+option(MQ_FLATBUFFER_BUILD_TESTS "build tests" OFF)
