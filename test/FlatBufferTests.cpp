@@ -118,3 +118,31 @@ TEST(DynamicFlatBufferTest, ZeroInitialization)
     EXPECT_FLOAT_EQ(buffer[0][2], 0.0);
     EXPECT_FLOAT_EQ(buffer[0][3], 0.0);
 }
+
+TEST(DynamicFlatBufferTest, SlotIterator)
+{
+    dynamic_flatbuffer<float, 3> buf(3); // One slot with four floats
+
+    buf[0][0] = 1;
+    buf[0][1] = 2;
+    buf[0][2] = 3;
+
+    buf[1][0] = 4;
+    buf[1][1] = 5;
+    buf[1][2] = 6;
+
+    buf[2][0] = 7;
+    buf[2][1] = 8;
+    buf[2][2] = 9;
+
+    auto exp = 1.0;
+    for(const auto& slot : buf.slots()) {
+        for(auto el : slot) {
+            std::cout << el << ", " << exp << std::endl;
+            EXPECT_EQ(el, exp);
+            exp++;
+        }
+    }
+}
+
+
