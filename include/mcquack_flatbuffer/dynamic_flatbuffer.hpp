@@ -257,7 +257,7 @@ public:
         dynamic_flatbuffer& buf_;
     };
 
-    constexpr auto slots() noexcept -> slot_access { return slot_access{*this}; }
+    constexpr auto slots() & noexcept -> slot_access { return slot_access{*this}; }
     // constexpr auto slots() const noexcept -> slot_access { return const_slot_access{*this}; }
 
 private:
