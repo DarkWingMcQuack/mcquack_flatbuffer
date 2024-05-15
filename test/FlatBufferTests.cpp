@@ -1,5 +1,7 @@
+#include <deque>
 #include <gtest/gtest.h>
 
+#include <list>
 #include <mcquack_flatbuffer/dynamic_flatbuffer.hpp>
 #include <numeric>
 
@@ -21,7 +23,7 @@ TEST(DynamicFlatBufferTest, AccessWithinRange)
     EXPECT_EQ(span[2], 5);
 }
 
-TEST(DynamicFlatBufferTest, AppendOperation)
+TEST(DynamicFlatBufferTest, AppendOperationArray)
 {
     dynamic_flatbuffer<int, 3> buf;
     std::array<int, 3> data1 = {1, 2, 3};
@@ -40,6 +42,138 @@ TEST(DynamicFlatBufferTest, AppendOperation)
     EXPECT_EQ(buf[1][2], 6);
 }
 
+TEST(DynamicFlatBufferTest, AppendOperationVector)
+{
+    dynamic_flatbuffer<int, 3> buf;
+    std::vector<int> data1 = {1, 2, 3};
+    std::vector<int> data2 = {4, 5, 6};
+
+    buf.append(std::move(data1));
+    buf.append(std::move(data2));
+
+    EXPECT_EQ(buf.number_of_slots(), 2);
+
+    EXPECT_EQ(buf[0][0], 1);
+    EXPECT_EQ(buf[0][1], 2);
+    EXPECT_EQ(buf[0][2], 3);
+    EXPECT_EQ(buf[1][0], 4);
+    EXPECT_EQ(buf[1][1], 5);
+    EXPECT_EQ(buf[1][2], 6);
+}
+
+TEST(DynamicFlatBufferTest, AppendOperationSpan)
+{
+    dynamic_flatbuffer<int, 3> buf;
+    std::vector<int> data1 = {1, 2, 3};
+    std::vector<int> data2 = {4, 5, 6};
+
+    std::span<int> s1 = data1;
+    std::span<int> s2 = data2;
+
+    buf.append(s1);
+    buf.append(s2);
+
+    EXPECT_EQ(buf.number_of_slots(), 2);
+
+    EXPECT_EQ(buf[0][0], 1);
+    EXPECT_EQ(buf[0][1], 2);
+    EXPECT_EQ(buf[0][2], 3);
+    EXPECT_EQ(buf[1][0], 4);
+    EXPECT_EQ(buf[1][1], 5);
+    EXPECT_EQ(buf[1][2], 6);
+}
+
+// Test appending a list to the dynamic_flatbuffer
+TEST(DynamicFlatBufferTest, AppendOperationList)
+{
+    dynamic_flatbuffer<int, 3> buf;
+    std::list<int> data1 = {1, 2, 3};
+    std::list<int> data2 = {4, 5, 6};
+
+    buf.append(data1);
+    buf.append(std::move(data2));
+
+    EXPECT_EQ(buf.number_of_slots(), 2);
+    EXPECT_EQ(buf[0][0], 1);
+    EXPECT_EQ(buf[0][1], 2);
+    EXPECT_EQ(buf[0][2], 3);
+    EXPECT_EQ(buf[1][0], 4);
+    EXPECT_EQ(buf[1][1], 5);
+    EXPECT_EQ(buf[1][2], 6);
+}
+
+// Test appending a deque to the dynamic_flatbuffer
+TEST(DynamicFlatBufferTest, AppendOperationDeque)
+{
+    dynamic_flatbuffer<int, 3> buf;
+    std::deque<int> data1 = {1, 2, 3};
+    std::deque<int> data2 = {4, 5, 6};
+
+    buf.append(data1);
+    buf.append(std::move(data2));
+
+    EXPECT_EQ(buf.number_of_slots(), 2);
+    EXPECT_EQ(buf[0][0], 1);
+    EXPECT_EQ(buf[0][1], 2);
+    EXPECT_EQ(buf[0][2], 3);
+    EXPECT_EQ(buf[1][0], 4);
+    EXPECT_EQ(buf[1][1], 5);
+    EXPECT_EQ(buf[1][2], 6);
+}
+
+// Test appending a set to the dynamic_flatbuffer
+TEST(DynamicFlatBufferTest, AppendOperationSet)
+{
+    dynamic_flatbuffer<int, 3> buf;
+    std::set<int> data1 = {1, 2, 3};
+    std::set<int> data2 = {4, 5, 6};
+
+    buf.append(data1);
+    buf.append(std::move(data2));
+
+    EXPECT_EQ(buf.number_of_slots(), 2);
+    EXPECT_EQ(buf[0][0], 1);
+    EXPECT_EQ(buf[0][1], 2);
+    EXPECT_EQ(buf[0][2], 3);
+    EXPECT_EQ(buf[1][0], 4);
+    EXPECT_EQ(buf[1][1], 5);
+    EXPECT_EQ(buf[1][2], 6);
+}
+
+// Test appending a custom range to the dynamic_flatbuffer
+class CustomRange {
+public:
+    int* begin() { return data_; }
+    int* end() { return data_ + 3; }
+private:
+    int data_[3] = {1, 2, 3};
+};
+
+// Non-member functions for begin and end to support ADL
+int* begin(CustomRange& range) {
+    return range.begin();
+}
+
+int* end(CustomRange& range) {
+    return range.end();
+}
+
+TEST(DynamicFlatBufferTest, AppendOperationCustomRange) {
+    dynamic_flatbuffer<int, 3> buf;
+    CustomRange data1;
+    CustomRange data2;
+
+    buf.append(data1);
+    buf.append(data2);
+
+    EXPECT_EQ(buf.number_of_slots(), 2);
+    EXPECT_EQ(buf[0][0], 1);
+    EXPECT_EQ(buf[0][1], 2);
+    EXPECT_EQ(buf[0][2], 3);
+    EXPECT_EQ(buf[1][0], 1);
+    EXPECT_EQ(buf[1][1], 2);
+    EXPECT_EQ(buf[1][2], 3);
+}
 
 TEST(DynamicFlatBufferTest, ResizeAndDataIntegrity)
 {

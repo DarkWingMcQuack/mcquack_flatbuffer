@@ -3,6 +3,7 @@
 #include <concepts>
 #include <cstddef>
 #include <iterator>
+#include <ranges>
 #include <span>
 #include <type_traits>
 #include <utility>
@@ -58,22 +59,28 @@ public:
 
     constexpr auto resize(std::size_t slot) noexcept -> void { buffer_.resize(slot * SLOT_SIZE); }
 
-    constexpr auto append(std::vector<T>&& slot) noexcept -> void
+    template<class Range>
+    requires std::movable<Range> and std::ranges::range<Range> and
+        std::same_as<std::ranges::range_value_t<Range>, T>
+    constexpr auto append(Range&& slot) noexcept -> void
     {
+        using std::ranges::begin;
+        using std::ranges::end;
+
         buffer_.reserve(buffer_.size() + SLOT_SIZE);
-        std::move(std::begin(slot), std::end(slot), std::back_inserter(buffer_));
+        std::move(begin(slot), end(slot), std::back_inserter(buffer_));
     }
 
-    constexpr auto append(std::span<T, SLOT_SIZE>&& slot) noexcept -> void
+    template<class Range>
+    requires std::is_lvalue_reference_v<Range> and std::ranges::range<Range> and
+        std::same_as<std::ranges::range_value_t<Range>, T>
+    constexpr auto append(Range&& slot) noexcept -> void
     {
-        buffer_.reserve(buffer_.size() + SLOT_SIZE);
-        std::copy(std::begin(slot), std::end(slot), std::back_inserter(buffer_));
-    }
+        using std::ranges::begin;
+        using std::ranges::end;
 
-    constexpr auto append(std::array<T, SLOT_SIZE>&& slot) noexcept -> void
-    {
         buffer_.reserve(buffer_.size() + SLOT_SIZE);
-        std::move(std::begin(slot), std::end(slot), std::back_inserter(buffer_));
+        std::copy(begin(slot), end(slot), std::back_inserter(buffer_));
     }
 
     constexpr auto number_of_slots() const noexcept -> std::size_t
